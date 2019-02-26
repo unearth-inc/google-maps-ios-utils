@@ -146,16 +146,21 @@ static NSString *const kStyleMapDefaultState = @"normal";
     return nil;
 }
 
-- (void)renderGeometryContainers:(NSArray<id<GMUGeometryContainer>> *)containers {
-  for (id<GMUGeometryContainer> container in containers) {
+- (void)renderGeometryContainers:(NSArray<id<GMUGeometryContainer>> *)containers
+{
+  for (id<GMUGeometryContainer> container in containers)
+  {
     GMUStyle *style = container.style;
-    if (!style && [container isKindOfClass:[GMUPlacemark class]]) {
+    if (!style && [container isKindOfClass:[GMUPlacemark class]])
+    {
       GMUPlacemark *placemark = container;
       style = [_styles objectForKey:placemark.styleUrl];
+
       // If not found, look it up in one of the StyleMaps
       style = style ?: [self getStyleFromStyleMaps:placemark.styleUrl];
     }
-    [self renderGeometryContainer:container style:style];
+
+      [self renderGeometryContainer:container style:style];
   }
 }
 
@@ -272,7 +277,26 @@ static NSString *const kStyleMapDefaultState = @"normal";
     GMUPlacemark *placemark = container;
     poly.title = placemark.title;
   }
-  poly.map = _map;
+    
+  
+  //
+  // Cast the container as a GMUFeature to access the identifier property
+  //
+  if ([container isKindOfClass:[GMUFeature class]])
+  {
+      GMUFeature *feature = container;
+      NSString * identifier = feature.identifier;
+      
+      if (!([identifier characterAtIndex:0] == 'c' && [identifier characterAtIndex:1] == '-'))
+      {
+          NSLog(@"featureident: '%@'\n", feature.identifier);
+          poly.tappable = true;
+          poly.userData = identifier;
+      }
+      
+      poly.map = _map;
+  }
+    
   [_mapOverlays addObject:poly];
 }
 
@@ -299,6 +323,7 @@ static NSString *const kStyleMapDefaultState = @"normal";
   GMSGroundOverlay *groundOverlay = [GMSGroundOverlay groundOverlayWithBounds:bounds icon:nil];
   groundOverlay.zIndex = overlay.zIndex;
   groundOverlay.bearing = overlay.rotation;
+  groundOverlay.tappable = true;
   __weak GMSGroundOverlay *weakGroundOverlay = groundOverlay;
   __weak GMSMapView *weakMap = _map;
   dispatch_async(_queue, ^{
