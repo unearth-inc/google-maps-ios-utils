@@ -53,6 +53,9 @@ NS_ASSUME_NONNULL_BEGIN
                       properties:(NSDictionary<NSString *, NSString *> * _Nullable)properties
                      boundingBox:(GMSCoordinateBounds * _Nullable)boundingBox;
 
+- (nullable NSString * ) getProperty: (NSString*) forAttribute;
+
 @end
+
 
 NS_ASSUME_NONNULL_END

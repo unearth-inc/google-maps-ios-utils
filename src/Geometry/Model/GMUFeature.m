@@ -33,4 +33,17 @@
   return self;
 }
 
+- (nullable NSString *) getProperty: (NSString*) forAttribute
+{
+    NSString * prop = [_properties objectForKey:forAttribute];
+    if ([prop isEqual:[NSNull null]])
+    {
+        return nil;
+    }
+    else
+    {
+        return prop;
+    }
+}
+
 @end
